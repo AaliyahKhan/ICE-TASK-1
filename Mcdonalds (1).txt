@@ -1,0 +1,138 @@
+Visual Studio 2019
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Mcdonald_s_App
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void OrderHistoryButton_Click(object sender, EventArgs e)
+        {
+            //Trent Made a change
+            try
+            {
+                String str = @"server=ML-RefVm-631348\SQLEXPRESS;database=Mcdonalds;Integrated Security=True";
+                String query = "select * from MacOrders";
+                SqlConnection con = new SqlConnection(str);
+                SqlCommand cmd = new SqlCommand(query, con);
+
+                con.Open();
+                MessageBox.Show("History of Orders");
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        MessageBox.Show("Order ID" + reader.GetInt32(0) +
+                            "\nNumber of Burgers" + reader.GetInt32(1) +
+                            "\nNumber of Chips" + reader.GetInt32(2) +
+                            "\nNumber of Nuggets" + reader.GetInt32(3) +
+                            "\nNumber of Drinks" + reader.GetInt32(4) +
+                            "\nTotal Price R" + reader.GetInt32(5)
+                            );
+                    }
+                }
+            }
+            catch (Exception es)
+            {
+                MessageBox.Show(es.Message);
+            }
+        }
+
+        private void OrderButton_Click(object sender, EventArgs e)
+        {
+            int NumBurgers;
+            int NumChips;
+            int NumCokes;
+            int NumNuggets;
+            NumBurgers = int.Parse(BurgerUpDown.Value.ToString());
+            NumChips = int.Parse(ChipsUpDown.Value.ToString());
+            NumCokes = int.Parse(CokeUpDown.Value.ToString());
+            NumNuggets = int.Parse(NuggetUpDown.Value.ToString());
+            double TotalBurger = (NumBurgers * 35);
+            double TotalChips = (NumChips * 15);
+            double TotalCokes = (NumCokes * 20);
+            double TotalNuggets = (NumNuggets * 25);
+            double TotalOrder = TotalBurger + TotalChips + TotalCokes + TotalNuggets;
+            string title = "Confirm Order";
+            string message = "You are ordering \r\n" +
+                NumBurgers + " Burgers at a price of R35 a Burger Total = R" + TotalBurger +
+                "\r\n" + NumChips + " Chips at a price of R15 a box Total = R" + TotalChips +
+                "\r\n" + NumCokes + " Cokes at a price of R15 a box Total = R" + TotalCokes +
+                "\r\n" + NumNuggets + " Nuggets at a price of R15 a box Total = R" + TotalNuggets +
+                "\r\n Total Order = R" + TotalOrder;
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result = MessageBox.Show(message, title, buttons);
+            if (result == DialogResult.Yes)
+            {
+                String str = @"server=ML-RefVm-631348\SQLEXPRESS;database=Mcdonalds;Integrated Security=True";
+                String query = "select * from MacOrders";
+                using (SqlConnection con = new SqlConnection(str))
+                {
+                    try
+                    {
+                        SqlCommand cmd = new SqlCommand(query, con);
+                        cmd.CommandText = "insert into MacOrders (NumBurger, NumChips, NumNuggets, NumDrinks, TotPrice) values (@NumBurgers,@NumChips,@NumNuggets,@NumCokes,@TotalOrder)";
+                        cmd.Parameters.AddWithValue("@NumBurgers", NumBurgers);
+                        cmd.Parameters.AddWithValue("@NumChips", NumChips);
+                        cmd.Parameters.AddWithValue("@NumNuggets", NumNuggets);
+                        cmd.Parameters.AddWithValue("@NumCokes", NumCokes);
+                        cmd.Parameters.AddWithValue("@TotalOrder", TotalOrder);
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                        MessageBox.Show("Order saved!");
+                    }
+                    catch (Exception es)
+                    {
+                        MessageBox.Show(es.Message);
+                    }
+                }
+                BurgerUpDown.Value = 0;
+                ChipsUpDown.Value = 0;
+                CokeUpDown.Value = 0;
+                NuggetUpDown.Value = 0;
+            }
+        }
+    }
+}
+
+
+________________________________________________________________________________________________________________________________
+
+SSMS:
+--------------------------------------------------------------------------------------------------------------------------------
+CREATE DATABASE Mcdonalds
+
+CREATE TABLE MacOrders(
+Order_ID int PRIMARY KEY NOT NULL IDENTITY (1,1),
+NumBurger int,
+NumChips int,
+NumNuggets int,
+NumDrinks int,
+TotPrice int
+)
+
+INSERT INTO MacOrders VALUES
+(1,2,4,5,450),
+(4,4,10,6,230),
+(3,6,1,5,423),
+(4,5,9,4,274)
+
+SELECT * FROM MacOrders

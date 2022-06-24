@@ -1,0 +1,131 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Pets_Inheritance
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+
+            Cat cat = new Cat();
+            Dog dog = new Dog();
+            Bird bird = new Bird();
+            Snake snake = new Snake();
+            Fish fish = new Fish();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedIndex == 0)
+            {
+                ItemA.Text = "Feather Colour:";
+                ItemB.Text = "Wingspan:";
+            }
+
+            if (comboBox1.SelectedIndex == 1)
+            {
+                ItemA.Text = "Fur Colour:";
+                ItemB.Text = "Number of Whiskers:";
+            }
+
+            if (comboBox1.SelectedIndex == 2)
+            {
+                ItemA.Text = "Fur Type:";
+                ItemB.Text = "Fur Colour:";
+            }
+
+            if (comboBox1.SelectedIndex == 3)
+            {
+                ItemA.Text = "Scale Colour:";
+                ItemB.Text = "Number of Gills:";
+            }
+
+            if (comboBox1.SelectedIndex == 4)
+            {
+                ItemA.Text = "Scale Colour:";
+                ItemB.Text = "Fang Length:";
+            }
+        }
+
+        private void saveBt_Click(object sender, EventArgs e)
+        {
+            string petSelected = "Animal type: " + comboBox1.SelectedItem.ToString();
+            string eyeColour = "Eye Colour: " + EyeColTextBox.Text;
+            string tailLength = "Tail Length: " + TailLengthTextBox.Text;
+            string breed = "Breed: " + BreedTextBox.Text;
+            string itemA = ItemATextBox.Text;
+            string itemB = ItemBTextBox.Text;
+
+            string[] animalInfo = { petSelected, eyeColour, tailLength, breed, itemA, itemB };
+
+            string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (comboBox1.SelectedIndex == 0)
+            {
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "Bird.txt")))
+                {
+                    foreach (string line in animalInfo)
+                        outputFile.WriteLine(line);
+                }
+            }
+            if (comboBox1.SelectedIndex == 1)
+            {
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "Cat.txt")))
+                {
+                    foreach (string line in animalInfo)
+                        outputFile.WriteLine(line);
+                }
+            }
+            if (comboBox1.SelectedIndex == 2)
+            {
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "Dog.txt")))
+                {
+                    foreach (string line in animalInfo)
+                        outputFile.WriteLine(line);
+                }
+            }
+            if (comboBox1.SelectedIndex == 3)
+            {
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "Fish.txt")))
+                {
+                    foreach (string line in animalInfo)
+                        outputFile.WriteLine(line);
+                }
+            }
+            if (comboBox1.SelectedIndex == 4)
+            {
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "Snake.txt")))
+                {
+                    foreach (string line in animalInfo)
+                        outputFile.WriteLine(line);
+                }
+            }
+
+            MessageBox.Show("Animal has been saved successfully!");
+            EyeColTextBox.Clear();
+            TailLengthTextBox.Clear();
+            BreedTextBox.Clear();
+            ItemATextBox.Clear();
+            ItemBTextBox.Clear();
+        }
+
+        private void ItemATextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
